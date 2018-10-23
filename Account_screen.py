@@ -3,13 +3,17 @@ from tkinter import ttk, Canvas
 from tkinter import font
 
 
-
 class AccountScreen(Frame):
 
     def select_it(self, value):
-        self.account_num.set(value)
+        # update the label (account number) with the text input
+        if value == "clear":
+            self.account_num.set("")
+        else:
+            self.account_num.set(self.account_num.get()+value)
+
+        # get the string of input
         print(self.account_num.get())
-        
     
     def __init__(self, parent, *args, **kwargs):
         # Main Frame
@@ -17,11 +21,11 @@ class AccountScreen(Frame):
 
         self.welcome_msg = "Enter in your Account Number"
         self.error_msg = "ERROR MESSAGE HERE"
-        self.account_num = StringVar(value="account number")
+        self.account_num = StringVar(value="")
 
         # Account Info Frame
         self.account_frame = Frame(self, bg = "black")
-        self.account_frame.pack(side=TOP, pady=50)
+        self.account_frame.pack(side=TOP, pady=20)
         # Keyboard Frame
         self.KeyFrame = Frame(self, bg="#BDCBEF")
         # Welcome Message
@@ -47,20 +51,31 @@ class AccountScreen(Frame):
             
         self.G_frame.pack()
             
-            
         # Account Info Label
         # use text variable as it will help change the writing of the text rather than an obj name
         self.accountLbl = Label(self.filler_frame1, font=(
             'Lucida Sans', 20), fg= "#b5c0d1", bg = 'white', textvariable = self.account_num, width=50, height=2)
         self.accountLbl.pack(side = TOP, pady=30, padx=100)
 
-        # 3 columns of keyboard 
+        # 4 rows of keyboard & clear
+        self.k_row0=Frame(self.KeyFrame)
+        self.k_row0.grid(row = 0 , column=0)
         self.k_row1=Frame(self.KeyFrame)
         self.k_row1.grid(row = 1 , column=0)
         self.k_row2=Frame(self.KeyFrame)
         self.k_row2.grid(row = 2 , column=0)
         self.k_row3=Frame(self.KeyFrame)
         self.k_row3.grid(row = 3 , column=0)
+        self.funtion_btn=Frame(self.KeyFrame, pady=10, bg='#BDCBEF')
+        self.funtion_btn.grid(row = 4, column=0)
+
+        # button row
+        buttons_nums = ['1','2','3','4','5','6','7','8','9','0']
+
+        for num in buttons_nums:
+            command = lambda x=num: self.select_it(x)
+            Button(self.k_row0, text = num, width = 4,  font=(
+                'Lucida Sans', 26),  fg="black", bg = 'white', command=command).grid(row=0, column = buttons_nums.index(num))
                 
         # First Row of Keybaord
         buttons_r1 = ['Q','W','E','R','T','Y','U','I','O','P']
@@ -78,15 +93,22 @@ class AccountScreen(Frame):
             Button(self.k_row2, text = button, width = 4,  font=(
                 'Lucida Sans', 26),  fg="black", bg = 'white', command=command).grid(row=0, column = buttons_r2.index(button))
 
-            # Third row of keyboard
-            buttons_r3 = ['Z','X','C','V','B','N','M']
+        # Third row of keyboard
+        buttons_r3 = ['Z','X','C','V','B','N','M']
 
         for button in buttons_r3:
             command = lambda x=button: self.select_it(x)
             Button(self.k_row3, text = button, width = 4, font=(
-                'Lucida Sans', 26), fg="black", bg="white", command=command).grid(row = 0, column = buttons_r3.index(button))
+                'Lucida Sans', 26), fg="black", bg="white",command=command).grid(row = 0, column = buttons_r3.index(button))
+
+        # clear button
+        funct = ["clear", "enter"]
+        for func in funct:
+            command = lambda x=func: self.select_it(x)
+            Button(self.funtion_btn, text = func, width = 5, font=(
+                'Lucida Sans', 26), fg="black", bg="white", command = command).grid(row = 0, column=funct.index(func))
                 
-        self.KeyFrame.pack(side=BOTTOM, pady=150)
+        self.KeyFrame.pack(side=BOTTOM, pady=0)
  
 class PayScreen:
     def __init__(self):
@@ -104,7 +126,7 @@ class PayScreen:
         self.root.bind("<F6>", self.toggle_fullscreen)
         
         self.account_page = AccountScreen(self.root)
-        self.account_page.pack(side=TOP, pady=50)
+        self.account_page.pack(side=TOP, pady=30)
 
     def toggle_fullscreen(self, event = None):
         self.state = not self.state  # toggle for fullscreen and not full
